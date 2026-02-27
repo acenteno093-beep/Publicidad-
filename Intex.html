@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AD-VANCE | Pagos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .active-plan { border-color: #2563eb !important; background-color: #f0f9ff !important; transform: scale(1.02); }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-white min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white text-slate-900 w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl shadow-blue-500/20 border border-slate-100">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="inline-flex bg-blue-600 w-16 h-16 rounded-2xl items-center justify-center text-white mb-4 shadow-xl">
+                <i class="fa-solid fa-bolt-lightning text-3xl"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold tracking-tighter text-slate-900 uppercase">AD-VANCE</h1>
+            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em] mt-2 italic">Soluciones Publicitarias</p>
+        </div>
+
+        <!-- Selección de Paquetes -->
+        <div class="space-y-3 mb-10">
+            <div onclick="updatePlan(25, '5 Publicaciones', this)" class="active-plan p-5 rounded-3xl border-2 border-slate-100 cursor-pointer flex justify-between items-center transition-all duration-300">
+                <div>
+                    <h3 class="font-bold text-slate-800 text-sm">5 Publicaciones</h3>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Paquete Básico</p>
+                </div>
+                <div class="text-2xl font-black text-blue-600">$25</div>
+            </div>
+
+            <div onclick="updatePlan(50, '12 Publicaciones', this)" class="p-5 rounded-3xl border-2 border-slate-100 cursor-pointer flex justify-between items-center transition-all duration-300 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-blue-600 text-white text-[8px] font-bold px-3 py-1 rounded-bl-xl uppercase">TOP</div>
+                <div>
+                    <h3 class="font-bold text-slate-800 text-sm">12 Publicaciones</h3>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Paquete Business</p>
+                </div>
+                <div class="text-2xl font-black text-blue-600">$50</div>
+            </div>
+
+            <div onclick="updatePlan(100, '25 Publicaciones', this)" class="p-5 rounded-3xl border-2 border-slate-100 cursor-pointer flex justify-between items-center transition-all duration-300">
+                <div>
+                    <h3 class="font-bold text-slate-800 text-sm">25 Publicaciones</h3>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Paquete Maestro</p>
+                </div>
+                <div class="text-2xl font-black text-blue-600">$100</div>
+            </div>
+        </div>
+
+        <!-- Resumen de Pago -->
+        <div class="bg-slate-50 rounded-[2rem] p-6 mb-8 text-center border border-slate-100">
+            <p id="plan-name" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 italic">Total del servicio</p>
+            <div id="plan-price" class="text-4xl font-black text-slate-900">$25.00 <span class="text-sm font-normal text-slate-400 uppercase">usd</span></div>
+        </div>
+
+        <!-- BOTONES PAYPAL CON TU ID REAL -->
+        <div id="paypal-button-container" class="min-h-[150px]"></div>
+
+        <div id="success-screen" class="hidden text-center py-10">
+            <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl shadow-sm">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="text-xl font-bold">¡Pago Confirmado!</h3>
+            <p class="text-sm text-slate-500 mt-2">Gracias por su confianza.</p>
+        </div>
+
+        <div class="mt-8 text-center border-t border-slate-50 pt-6">
+            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest flex items-center justify-center gap-2">
+                <i class="fa-solid fa-shield-check text-blue-600 text-xs"></i> Protección de compra segura por PayPal
+            </p>
+        </div>
+    </div>
+
+    <!-- SDK PAYPAL REAL CON TU ID: ATOMdrfKJD-r3S5sOo88tVOq9i6LNcgHIBuHDJIHgKUbqJlYoMH_AUFd4-lewfw2SMNo5POXVYFBijnG -->
+    <script src="https://www.paypal.com/sdk/js?client-id=ATOMdrfKJD-r3S5sOo88tVOq9i6LNcgHIBuHDJIHgKUbqJlYoMH_AUFd4-lewfw2SMNo5POXVYFBijnG&currency=USD"></script>
+
+    <script>
+        let currentAmount = "25.00";
+        let currentPlanName = "5 Publicaciones";
+
+        function updatePlan(price, name, el) {
+            currentAmount = price.toFixed(2);
+            currentPlanName = name;
+            document.getElementById('plan-price').innerHTML = `$${currentAmount} <span class="text-sm font-normal text-slate-400 uppercase">usd</span>`;
+            document.querySelectorAll('div[onclick]').forEach(c => c.classList.remove('active-plan'));
+            el.classList.add('active-plan');
+            renderPaypal();
+        }
+
+        function renderPaypal() {
+            const container = document.getElementById('paypal-button-container');
+            container.innerHTML = ''; 
+            
+            paypal.Buttons({
+                style: { layout: 'vertical', color: 'blue', shape: 'pill', label: 'pay', height: 50 },
+                createOrder: (data, actions) => {
+                    return actions.order.create({
+                        purchase_units: [{
+                            description: "Publicidad: " + currentPlanName,
+                            amount: { currency_code: 'USD', value: currentAmount }
+                        }]
+                    });
+                },
+                onApprove: (data, actions) => {
+                    return actions.order.capture().then(() => {
+                        document.getElementById('paypal-button-container').classList.add('hidden');
+                        document.getElementById('success-screen').classList.remove('hidden');
+                    });
+                }
+            }).render('#paypal-button-container');
+        }
+
+        window.onload = renderPaypal;
+    </script>
+</body>
+</html>
+
